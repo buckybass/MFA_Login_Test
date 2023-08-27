@@ -1,77 +1,66 @@
 *** Settings ***
-Library    Browser
+Library    SeleniumLibrary
 Library    totp.py  
-Suite Setup    Open Browser    browser=${BROWSER}    headless=${HEADLESS}
-Test Setup    New Context
-Test Teardown    Close Context
-Suite Teardown    Close Browser
 
 *** Variables ***
-${BROWSER}    chromium
-${HEADLESS}    False
+${BROWSER}    chrome
 
 *** Test Cases ***
 Login Pass And OTP Pass
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=username    demo_user
-    Fill Text    id=password    secret_pass
-    ${totp}    get_totp    GAXG2MTEOR3DMMDG  # เปลี่ยนชื่อฟังก์ชันจาก Get Totp เป็น get_totp
-    Fill Text    id=totpcode     ${totp}
-    Click    "Sign in"
-    Browser.Get Text  h1  ==  Welcome!
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=username    demo_user
+    Input Text    id=password    secret_pass
+    ${totp}    get_totp    GAXG2MTEOR3DMMDG
+    Input Text    id=totpcode     ${totp}
+    Click Element    id=log-in
+    Wait Until Page Contains    Welcome!
 
 Login Pass And OTP Fail
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=username    demo_user
-    Fill Text    id=password    secret_pass
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=username    demo_user
+    Input Text    id=password    secret_pass
     ${totp}    Get Totp    JBSWY3DPEHPK3PXP
-    Fill Text    id=totpcode     ${totp}
-    Click    "Sign in"
-    ${top_message}    Browser.Get Text    xpath=//*[@id="top_message"]
-    Should Be Equal As Strings    ${top_message}    Invalid MFA Code!
+    Input Text    id=totpcode     ${totp}
+    Click Element    id=log-in
+    Wait Until Page Contains    Invalid MFA Code!
 
 Login Username Wrong
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=username    demo_user2
-    Fill Text    id=password    secret_pass
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=username    demo_user2
+    Input Text    id=password    secret_pass
     ${totp}    Get Totp    GAXG2MTEOR3DMMDG
-    Fill Text    id=totpcode     ${totp}
-    Click    "Sign in"
-    ${top_message}    Browser.Get Text    xpath=//*[@id="top_message"]
-    Should Be Equal As Strings    ${top_message}    Invalid Username!
+    Input Text    id=totpcode     ${totp}
+    Click Element    id=log-in
+    Wait Until Page Contains    Invalid Username!
 
 Login Password Wrong
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=username    demo_user
-    Fill Text    id=password    secret_passa
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=username    demo_user
+    Input Text    id=password    secret_passa
     ${totp}    Get Totp    GAXG2MTEOR3DMMDG
-    Fill Text    id=totpcode     ${totp}
-    Click    "Sign in"
-    ${top_message}    Browser.Get Text    xpath=//*[@id="top_message"]
-    Should Be Equal As Strings    ${top_message}    Invalid Password!
+    Input Text    id=totpcode     ${totp}
+    Click Element    id=log-in
+    Wait Until Page Contains    Invalid Password!
 
 Login Without Username
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=password    secret_pass
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=password    secret_pass
     ${totp}    Get Totp    GAXG2MTEOR3DMMDG
-    Fill Text    id=totpcode     ${totp}
-    Click    "Sign in"
-    ${top_message}    Browser.Get Text    xpath=//*[@id="top_message"]
-    Should Be Equal As Strings    ${top_message}    The Username is Required!
+    Input Text    id=totpcode     ${totp}
+    Click Element    id=log-in
+    Wait Until Page Contains    The Username is Required!
 
 Login Without Password
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=username    demo_user
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=username    demo_user
     ${totp}    Get Totp    GAXG2MTEOR3DMMDG
-    Fill Text    id=totpcode     ${totp}
-    Click    "Sign in"
-    ${top_message}    Browser.Get Text    xpath=//*[@id="top_message"]
-    Should Be Equal As Strings    ${top_message}    The Password is Required!
+    Input Text    id=totpcode     ${totp}
+    Click Element    id=log-in
+    Wait Until Page Contains    The Password is Required!
 
 Login Without OTP
-    New Page    https://seleniumbase.io/realworld/login
-    Fill Text    id=username    demo_user
-    Fill Text    id=password    secret_pass
-    Click    "Sign in"
-    ${top_message}    Browser.Get Text    xpath=//*[@id="top_message"]
-    Should Be Equal As Strings    ${top_message}    The MFA Code is Required!
+    Open Browser    https://seleniumbase.io/realworld/login    browser=${BROWSER}
+    Input Text    id=username    demo_user
+    Input Text    id=password    secret_pass
+    Click Element    id=log-in
+    Wait Until Page Contains    The MFA Code is Required!
